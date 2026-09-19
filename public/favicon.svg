@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" role="img" aria-label="KeenPlaza">
+  <defs>
+    <linearGradient id="kp-tile" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6a4bff"/><stop offset="1" stop-color="#3a239a"/>
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="13" fill="url(#kp-tile)"/>
+  <rect x="5" y="10" width="38" height="3.2" rx="1.6" fill="#fff"/>
+  <path d="M7 16h34v23H7Z" fill="#fff"/>
+  <path d="M10.5 39V29a3.5 3.5 0 0 1 7 0v10Z" fill="#3a239a"/>
+  <path d="M20.5 39V29a3.5 3.5 0 0 1 7 0v10Z" fill="#FF7A2F"/>
+  <path d="M30.5 39V29a3.5 3.5 0 0 1 7 0v10Z" fill="#3a239a"/>
+</svg>

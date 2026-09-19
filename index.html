@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KeenPlaza — Online store for Indian businesses</title>
+    <meta name="description" content="KeenPlaza runs your online store: catalog, stock, pricing, payments, delivery and returns, built for Indian businesses." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      document.documentElement.dataset.kvBrand = 'keenplaza'
+      try { var m = localStorage.getItem('kv_mode')
+        document.documentElement.dataset.kvMode = m === 'light' || m === 'dark' ? m : matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      } catch (e) { document.documentElement.dataset.kvMode = 'light' }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
