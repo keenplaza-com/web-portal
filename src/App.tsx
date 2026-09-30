@@ -16,7 +16,7 @@ import './site.css'
 const ADMIN_URL = import.meta.env.VITE_ADMIN_URL ?? 'http://localhost:5173'
 // The prototype's `.container`: centred, 1320px, 24px gutters.
 const CONTAINER = 'mx-auto w-full max-w-[1320px] px-6'
-// Who a visitor reaches without the lead form: an E.164 number, e.g. +917359207076.
+// Who a visitor reaches without the lead form: an E.164 number, e.g. +917285082801.
 const CONTACT_PHONE = (import.meta.env.VITE_CONTACT_PHONE as string | undefined) ?? ''
 const WHATSAPP_URL = CONTACT_PHONE
   ? `https://wa.me/${CONTACT_PHONE.replace(/\D/g, '')}?text=${encodeURIComponent("Hi KeenPlaza, I'd like to open my store online.")}`
