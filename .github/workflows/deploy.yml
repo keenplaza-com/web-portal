@@ -1,0 +1,44 @@
+name: Deploy to keenplaza.com
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # package.json links kvcl as file:../../kvcl, so mirror that layout
+      - uses: actions/checkout@v4
+        with:
+          path: apps/web-portal
+      - uses: actions/checkout@v4
+        with:
+          repository: keenvector-in/kvcl
+          path: kvcl
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build kvcl
+        working-directory: kvcl
+        run: npm install --no-audit --no-fund && npm run build
+
+      - name: Build web-portal
+        working-directory: apps/web-portal
+        env:
+          VITE_GATEWAY_URL: ${{ vars.VITE_GATEWAY_URL }}
+          VITE_ADMIN_URL: ${{ vars.VITE_ADMIN_URL }}
+        run: npm install --no-audit --no-fund && npm run build
+
+      - name: Publish to keenplaza-com/site (GitHub Pages)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          deploy_key: ${{ secrets.SITE_DEPLOY_KEY }}
+          external_repository: keenplaza-com/site
+          publish_branch: gh-pages
+          publish_dir: apps/web-portal/dist
+          cname: keenplaza.com
+          force_orphan: true
