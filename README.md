@@ -32,13 +32,14 @@ Hosted on Vercel, like keenvector.in; the domains stay registered at Hostinger. 
 to `master` using `vercel.json`: it clones the public kvcl repo into `.kvcl`, points the dependency at it
 (only on Vercel — locally it stays `../../kvcl`), and builds with `.env.production`.
 
-`keenplaza.in` is the one address; `keenplaza.com` and `www.*` redirect to it (set on the project's
-Domains page in Vercel). The production build has **no gateway**: no public API yet, so the contact
+Two Vercel projects build the same repo, one per domain, so each serves the site itself (no
+cross-domain redirect): `keenplaza-web` → `keenplaza.in`, `keenplaza-com` → `keenplaza.com`; each
+`www.` redirects to its own apex. `VITE_SITE_URL` (the build's own address: canonical, og:url,
+`robots.txt`, `sitemap.xml` from `vite.config.ts`) is `https://keenplaza.in` in `.env.production`; the
+`keenplaza-com` project overrides it in its Environment Variables. The production build has **no gateway**: no public API yet, so the contact
 section offers WhatsApp and a call (`VITE_CONTACT_PHONE`) instead of the lead form, and "Store login"
 points at `https://admin.keenplaza.in` (not live yet). Set `VITE_GATEWAY_URL` in `.env.production` once
 the API is public and the form comes back.
 
 DNS at Hostinger (hPanel → Domains → DNS): either nameservers `ns1.vercel-dns.com` / `ns2.vercel-dns.com`
 (as keenvector.in does), or the A / CNAME records the Vercel Domains page shows.
-
-`public/.htaccess` does the same redirects on an Apache/LiteSpeed host, if the site ever moves there.
