@@ -250,6 +250,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
 .mk-checks svg{color:var(--color-success)}
 .mk-form{display:grid; grid-template-columns:1fr 1fr; gap:16px; border-radius:24px; padding:32px; box-shadow:0 30px 70px -35px rgba(20,10,60,.45)}
 /* kvcl's TextField/TextArea, sized for a marketing form rather than a console. */
+.mk-form-direct{display:block}
 .mk-form textarea{min-height:88px}
 .mk-form input{min-height:46px}
 .mk-form input, .mk-form textarea{ font-size:16px; transition:border-color var(--mk-t), box-shadow var(--mk-t)}

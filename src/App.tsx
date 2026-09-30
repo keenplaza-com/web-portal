@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties, type FormEvent, type P
 import { useMutation } from '@tanstack/react-query'
 import { Button, ColorModeToggle, Icon, LogoMark, TextArea, TextField, Wordmark } from '@keenvector/kvcl'
 import type { ApiError, IconName } from '@keenvector/kvcl'
-import { leads } from './api'
+import { leads, leadsOnline } from './api'
 import './site.css'
 
 // KeenPlaza's marketing site (ADR 0016): one page — what KeenPlaza is, what a store gets, early access, and a
@@ -16,6 +16,12 @@ import './site.css'
 const ADMIN_URL = import.meta.env.VITE_ADMIN_URL ?? 'http://localhost:5173'
 // The prototype's `.container`: centred, 1320px, 24px gutters.
 const CONTAINER = 'mx-auto w-full max-w-[1320px] px-6'
+// Who a visitor reaches without the lead form: an E.164 number, e.g. +917359207076.
+const CONTACT_PHONE = (import.meta.env.VITE_CONTACT_PHONE as string | undefined) ?? ''
+const WHATSAPP_URL = CONTACT_PHONE
+  ? `https://wa.me/${CONTACT_PHONE.replace(/\D/g, '')}?text=${encodeURIComponent("Hi KeenPlaza, I'd like to open my store online.")}`
+  : ''
+const prettyPhone = (e164: string) => e164.replace(/^\+91(\d{5})(\d{5})$/, '+91 $1 $2')
 /** kvcl fields carry a bottom margin for stacked forms; the lead form is a grid with its own gap. */
 const FIELD = { marginBottom: 0 }
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -133,7 +139,11 @@ function CallbackBar() {
   }, [])
   return (
     <div className={'mk-callback-bar' + (hidden ? ' is-hidden' : '')} aria-hidden={hidden || undefined}>
-      <Button as="a" href="#contact" block className="mk-shine" tabIndex={hidden ? -1 : undefined}>Request a callback</Button>
+      {leadsOnline || !WHATSAPP_URL ? (
+        <Button as="a" href="#contact" block className="mk-shine" tabIndex={hidden ? -1 : undefined}>Request a callback</Button>
+      ) : (
+        <Button as="a" href={WHATSAPP_URL} target="_blank" rel="noreferrer" block className="mk-shine" tabIndex={hidden ? -1 : undefined}>Message us on WhatsApp</Button>
+      )}
     </div>
   )
 }
@@ -327,14 +337,18 @@ export function App() {
                 <div>
                   <span className="mk-eyebrow">Talk to us</span>
                   <h2 className="mk-h2">Tell us about your business</h2>
-                  <p className="mk-lead">Leave your number. We'll call you back on WhatsApp within a working day, set up your store with you, and you're selling the same week.</p>
+                  <p className="mk-lead">
+                    {leadsOnline
+                      ? "Leave your number. We'll call you back on WhatsApp within a working day, set up your store with you, and you're selling the same week."
+                      : "Message us on WhatsApp or call. We'll set up your store with you, and you're selling the same week."}
+                  </p>
                   <ul className="mk-checks">
                     <li><Icon name="check" size={16} /> No card, no setup fee</li>
                     <li><Icon name="check" size={16} /> Your Razorpay, your money</li>
                     <li><Icon name="check" size={16} /> Real people, on WhatsApp</li>
                   </ul>
                 </div>
-                <LeadForm />
+                {leadsOnline ? <LeadForm /> : <DirectContact />}
               </div>
             </div>
           </div>
@@ -396,6 +410,25 @@ function toE164(raw: string) {
   if (v.startsWith('+')) return /^\+[1-9]\d{7,14}$/.test(v) ? v : ''
   const m = /^(?:0|91)?([6-9]\d{9})$/.exec(v)
   return m ? `+91${m[1]}` : ''
+}
+
+/** The contact card when there is no lead API to post to: WhatsApp and a phone call, nothing to fail. */
+function DirectContact() {
+  if (!CONTACT_PHONE) return null
+  return (
+    <div className="mk-form mk-form-direct">
+      <h3 className="m-0 text-lg font-bold">Talk to a person</h3>
+      <p className="mt-1 text-sm text-fg-muted">Tell us what you sell and where — we'll take it from there.</p>
+      <div className="mt-5 grid gap-3">
+        <Button as="a" href={WHATSAPP_URL} target="_blank" rel="noreferrer" size="lg" block className="mk-shine" icon={<Icon name="share" size={17} />}>
+          Message us on WhatsApp
+        </Button>
+        <Button as="a" href={`tel:${CONTACT_PHONE}`} size="lg" block variant="outline" icon={<Icon name="phone" size={17} />}>
+          Call {prettyPhone(CONTACT_PHONE)}
+        </Button>
+      </div>
+    </div>
+  )
 }
 
 function LeadForm() {
