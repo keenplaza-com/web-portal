@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "installCommand": "git clone --depth 1 https://github.com/keenvector-in/kvcl.git .kvcl && npm --prefix .kvcl install --no-audit --no-fund && npm --prefix .kvcl run build && sed -i 's#file:../../kvcl#file:./.kvcl#' package.json && npm install --no-audit --no-fund",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "headers": [
+    { "source": "/assets/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] }
+  ]
+}
