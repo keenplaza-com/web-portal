@@ -1,0 +1,35 @@
+# Tell plaza-chart (the deploy repo) about every push to master. Its bump
+# workflow records this commit as dev's version of the portal and deploys it
+# to dev; staging and prod follow by promotion PRs there.
+# See plaza-chart/docs/promotion.md.
+#
+# Every KeenPlaza portal builds against kvcl through file:../../kvcl, so the
+# kvcl commit current right now is sent along and pinned with this one.
+name: release
+
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Dispatch build-done to plaza-chart
+        env:
+          # Fine-grained token: Contents read on keenvector-in/kvcl, Contents write on plaza-chart.
+          GH_TOKEN: ${{ secrets.KP_CHART_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::notice::KP_CHART_TOKEN is not set; plaza-chart was not told about this push"
+            exit 0
+          fi
+          kvcl=$(gh api repos/keenvector-in/kvcl/commits/master --jq .sha)
+          gh api repos/keenplaza-com/plaza-chart/dispatches -f event_type=build-done \
+            -f "client_payload[name]=${{ github.event.repository.name }}" \
+            -f "client_payload[sha]=${{ github.sha }}" \
+            -f "client_payload[kvcl_sha]=$kvcl"
+          echo "plaza-chart: ${{ github.event.repository.name }} dev -> ${GITHUB_SHA::12} (kvcl ${kvcl::12})"
